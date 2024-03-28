@@ -1,6 +1,6 @@
 "use client";
 
-import * as React from "react";
+import axiosInstance from "@/lib/Axios";
 import { zodResolver } from "@hookform/resolvers/zod";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import {
@@ -14,10 +14,11 @@ import {
   SelectChangeEvent,
   Stack,
 } from "@mui/material";
+import Image from "next/image";
+import * as React from "react";
 import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { z as zod } from "zod";
-import axiosInstance from "@/lib/Axios";
 
 const schema = zod.object({
   name: zod.string().min(1, { message: "Name is required" }),
@@ -25,6 +26,7 @@ const schema = zod.object({
   organization: zod.string().min(1, { message: "Organization is required" }),
   role: zod.string().min(1, { message: "Role is required" }).optional(),
   sponsor_status: zod.string().optional(),
+  file: zod.string(),
 });
 
 type Values = zod.infer<typeof schema>;
@@ -35,6 +37,7 @@ const defaultValues = {
   organization: "",
   role: "",
   sponsor_status: "",
+  file: "",
 } satisfies Values;
 
 const SpeakersDetailsForm = () => {
@@ -52,7 +55,7 @@ const SpeakersDetailsForm = () => {
 
   const onSubmit = async (values: Values): Promise<void> => {
     try {
-      console.log("-------------form values", values);
+      console.log("----form values", values);
       setIsPending(true);
 
       const formData = new FormData();
@@ -96,6 +99,8 @@ const SpeakersDetailsForm = () => {
       };
     } finally {
       setIsPending(false);
+      setPreviewImage(null);
+      reset();
     }
   };
   const handleRoleSelection = (event: SelectChangeEvent<string>) => {
@@ -220,7 +225,7 @@ const SpeakersDetailsForm = () => {
         <Button
           component="label"
           role={undefined}
-          variant="contained"
+          variant="outlined"
           tabIndex={-1}
           startIcon={<CloudUploadIcon />}
           // onClick={handleFileChange}
@@ -240,7 +245,9 @@ const SpeakersDetailsForm = () => {
         /> */}
         {/* Display the uploaded image */}
         {previewImage && (
-          <img
+          <Image
+            height={200}
+            width={100}
             src={previewImage as string}
             alt="Selected"
             style={{ maxWidth: "40%", marginTop: 10 }}
@@ -248,25 +255,14 @@ const SpeakersDetailsForm = () => {
           />
         )}
 
-        {/* <Button
-          component="label"
-          role={undefined}
-          variant="contained"
-          tabIndex={-1}
-          startIcon={<CloudUploadIcon />}
-        >
-          Upload file
-          <VisuallyHiddenInput type="file" />
-        </Button> */}
-
         <Button
-          // disabled={isPending}
+          disabled={isPending}
+          size="large"
           type="submit"
           variant="contained"
           className="bg-primary/80"
         >
-          {/* {isPending ? "Loading..." : "Sign up"} */}
-          Submit
+          {isPending ? "Loading..." : "Submit"}
         </Button>
       </Stack>
     </form>

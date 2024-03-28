@@ -11,9 +11,9 @@ const page = () => {
         {/* <Grid lg={4} md={6} xs={12}>
           <SpeakersInfo />
         </Grid> */}
-        <Grid lg={8} md={6} xs={12}>
-          <SpeakersDetailsForm />
-        </Grid>
+      </Grid>
+      <Grid lg={8} md={6} xs={12}>
+        <SpeakersDetailsForm />
       </Grid>
     </Stack>
   );
